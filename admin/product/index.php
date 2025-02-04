@@ -37,4 +37,5 @@ $recordset = $stmt->fetchAll();
         <?php } ?>
     </table>
 </body>
+
 </html>
