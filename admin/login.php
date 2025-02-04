@@ -1,19 +1,18 @@
 <?php
-
+require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/function.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 
 if (isset($_POST["admin_mail"]) && isset($_POST["admin_password"])) {
     $stmt = $db->prepare("SELECT * FROM table_admin WHERE admin_mail=:admin_mail");
     $stmt->execute([":admin_mail" => $_POST["admin_mail"]]);
-    
+
     if ($row = $stmt->fetch()) {
         if (password_verify($_POST["admin_password"], $row["admin_password"])) {
             session_start();
             $_SESSION['is_logged'] = true; // Assurez-vous d'utiliser la même clé de session
-            header("Location:index.php");
-            exit();
+            redirect("index.php");
         } else {
-            echo "Identifiant ou mot de passe incorrect"; 
+            echo "Identifiant ou mot de passe incorrect";
         }
     } else {
         echo "Identifiant ou mot de passe incorrect";

@@ -29,13 +29,11 @@ $recordset = $stmt->fetchAll();
                 <td><?= $row['product_serie']; ?></td>
                 <td><?= $row['product_name']; ?></td>
                 <td>
-                    <a href="form.php?id=<?= $row['product_id']; ?>">modif</a>
-                    <a href="delete.php?id=<?= $row['product_id']; ?>">supp</a>
+                    <a href="form.php?id=<?= $row['product_id']; ?>">Modifier</a>
+                    <a href="delete.php?id=<?= $row['product_id']; ?>">Supprimer</a>
                 </td>
             </tr>
         <?php } ?>
     </table>
-
 </body>
-
 </html>
