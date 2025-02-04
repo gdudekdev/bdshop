@@ -10,7 +10,7 @@ if (isset($_POST["admin_mail"]) && isset($_POST["admin_password"])) {
         if (password_verify($_POST["admin_password"], $row["admin_password"])) {
             session_start();
             $_SESSION['is_logged'] = true; // Assurez-vous d'utiliser la même clé de session
-            header("Location: index.php");
+            header("Location:index.php");
             exit();
         } else {
             echo "Identifiant ou mot de passe incorrect"; 
