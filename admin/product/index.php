@@ -26,11 +26,11 @@ $recordset = $stmt->fetchAll();
         </tr>
         <?php foreach ($recordset as $row) { ?>
             <tr>
-                <td><?= htmlspecialchars($row['product_serie']); ?></td>
-                <td><?= htmlspecialchars($row['product_name']); ?></td>
+                <td><?= hsc($row['product_serie']); ?></td>
+                <td><?= hsc($row['product_name']); ?></td>
                 <td>
-                    <a href="form.php?id=<?= htmlspecialchars($row['product_id']); ?>">Modifier</a>
-                    <a href="delete.php?id=<?= htmlspecialchars($row['product_id']); ?>">Supprimer</a>
+                    <a href="form.php?id=<?= hsc($row['product_id']); ?>">Modifier</a>
+                    <a href="delete.php?id=<?= hsc($row['product_id']); ?>">Supprimer</a>
                 </td>
             </tr>
         <?php } ?>
