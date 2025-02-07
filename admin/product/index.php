@@ -1,12 +1,11 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/function.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/function.php";
 
 $stmt = $db->prepare("SELECT * FROM table_product ORDER BY product_id DESC");
 $stmt->execute();
 $recordset = $stmt->fetchAll();
-
 ?>
 
 <!DOCTYPE html>
@@ -19,6 +18,7 @@ $recordset = $stmt->fetchAll();
 </head>
 
 <body>
+    <a href="form.php">Ajouter</a>
     <table>
         <tr>
             <th>Serie</th>
@@ -37,5 +37,4 @@ $recordset = $stmt->fetchAll();
         <?php } ?>
     </table>
 </body>
-
 </html>

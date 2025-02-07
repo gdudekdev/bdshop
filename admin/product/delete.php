@@ -9,4 +9,3 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $stmt->execute(["product_id" => $_GET['id']]);
 }
 redirect("index.php");
-
