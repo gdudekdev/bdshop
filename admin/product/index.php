@@ -105,7 +105,10 @@ $recordset = $stmt->fetchAll();
                 <td><?= hsc($row['product_publisher']); ?></td>
                 <td><?= hsc($row['product_cartoonist']); ?></td>
                 <td class="action-links">
+                    <!-- On envoie un formulaire GET avec un seul champ id dans lequel on vient passer l'id correspondant à la ligne séléctionnée -->
+                     <!-- On se réfère à l'id pour venir modifier l'élément dans la BDD -->
                     <a href="form.php?id=<?= hsc($row['product_id']); ?>">Modiff</a>
+                    <!-- On se réfère à l'id pour venir supprimer l'élément dans la BDD -->
                     <a href="delete.php?id=<?= hsc($row['product_id']); ?>">Supp</a>
                 </td>
             </tr>
