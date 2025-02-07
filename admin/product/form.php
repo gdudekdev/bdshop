@@ -7,18 +7,34 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 $product_serie = "";
 $product_name = "";
 $product_id = 0;
-$product_date=date("Y-m-d"); // Dans le cas où on a un champ date
+$product_date = date("Y-m-d");
+$product_volume = "";
+$product_author = "";
+$product_description = "";
+$product_resume = "";
+$product_stock = "";
+$product_price = "";
+$product_publisher = "";
+$product_cartoonist = "";
 
-if (isset($_GET["id"]) && is_numeric($_GET["id"])){	
-	$stmt= $db -> prepare ("SELECT * FROM table_product WHERE product_id = :product_id");
-	$stmt -> bindValue(":product_id", $_GET["id"]);
-	$stmt -> execute();
+if (isset($_GET["id"]) && is_numeric($_GET["id"])) {	
+	$stmt = $db->prepare("SELECT * FROM table_product WHERE product_id = :product_id");
+	$stmt->bindValue(":product_id", $_GET["id"]);
+	$stmt->execute();
 
-	if($row = $stmt -> fetch()){
+	if ($row = $stmt->fetch()) {
 		$product_serie = $row["product_serie"];
 		$product_name = $row["product_name"];
 		$product_id = $row["product_id"];
-	};
+		$product_volume = $row["product_volume"];
+		$product_author = $row["product_author"];
+		$product_description = $row["product_description"];
+		$product_resume = $row["product_resume"];
+		$product_stock = $row["product_stock"];
+		$product_price = $row["product_price"];
+		$product_publisher = $row["product_publisher"];
+		$product_cartoonist = $row["product_cartoonist"];
+	}
 }
 ?>
 
@@ -29,17 +45,86 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])){
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Formulaire Produit</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+		form {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			width: 100%;
+			max-width: 500px;
+		}
+		label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: bold;
+		}
+		input[type="text"] {
+			width: 100%;
+			padding: 8px;
+			margin-bottom: 20px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+		input[type="submit"] {
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px 15px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 16px;
+		}
+		input[type="submit"]:hover {
+			background-color: #45a049;
+		}
+		a {
+			display: inline-block;
+			margin-top: 20px;
+			color: #333;
+			text-decoration: none;
+			font-size: 14px;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
 </head>
 
 <body>
 	<form action="process.php" method="post">
-
 		<label for="product_serie">Serie</label>
-		<input type="text" name="product_serie" id="product_serie" value="<?= hsc($product_serie)?>">
+		<input type="text" name="product_serie" id="product_serie" value="<?= hsc($product_serie) ?>">
 		<label for="product_name">Titre</label>
-		<input type="text" name="product_name" id="product_name" value="<?= hsc($product_name)?>" >
+		<input type="text" name="product_name" id="product_name" value="<?= hsc($product_name) ?>">
+		<label for="product_volume">Volume</label>
+		<input type="text" name="product_volume" id="product_volume" value="<?= hsc($product_volume) ?>">
+		<label for="product_author">Auteur</label>
+		<input type="text" name="product_author" id="product_author" value="<?= hsc($product_author) ?>">
+		<label for="product_description">Description</label>
+		<input type="text" name="product_description" id="product_description" value="<?= hsc($product_description) ?>">
+		<label for="product_resume">Resume</label>
+		<input type="text" name="product_resume" id="product_resume" value="<?= hsc($product_resume) ?>">
+		<label for="product_stock">Stock</label>
+		<input type="text" name="product_stock" id="product_stock" value="<?= hsc($product_stock) ?>">
+		<label for="product_price">Prix</label>
+		<input type="text" name="product_price" id="product_price" value="<?= hsc($product_price) ?>">
+		<label for="product_publisher">Publication</label>
+		<input type="text" name="product_publisher" id="product_publisher" value="<?= hsc($product_publisher) ?>">
+		<label for="product_cartoonist">Dessinateur</label>
+		<input type="text" name="product_cartoonist" id="product_cartoonist" value="<?= hsc($product_cartoonist) ?>">
 
-		<input type="hidden" name="product_id" value="<?= hsc($product_id)?>">
+		<input type="hidden" name="product_id" value="<?= hsc($product_id) ?>">
 		<input type="hidden" name="formCU" value="ok">
 		<input type="submit" value="Enregistrer">
 
