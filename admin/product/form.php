@@ -23,6 +23,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 	$stmt->execute();
 
 	if ($row = $stmt->fetch()) {
+		$product_date = $row["product_date"];
 		$product_serie = $row["product_serie"];
 		$product_name = $row["product_name"];
 		$product_id = $row["product_id"];
@@ -102,6 +103,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 </head>
 
 <body>
+	<!-- L'élement dans le for du label doit correspondre à l'id de l'input -->
 	<form action="process.php" method="post">
 		<label for="product_serie">Serie</label>
 		<input type="text" name="product_serie" id="product_serie" value="<?= hsc($product_serie) ?>">
@@ -119,11 +121,14 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 		<input type="text" name="product_stock" id="product_stock" value="<?= hsc($product_stock) ?>">
 		<label for="product_price">Prix</label>
 		<input type="text" name="product_price" id="product_price" value="<?= hsc($product_price) ?>">
+		<label for="product_date">Date</label>
+		<input type="text" name="product_date" id="product_date" value="<?= hsc($product_date) ?>">
 		<label for="product_publisher">Publication</label>
 		<input type="text" name="product_publisher" id="product_publisher" value="<?= hsc($product_publisher) ?>">
 		<label for="product_cartoonist">Dessinateur</label>
 		<input type="text" name="product_cartoonist" id="product_cartoonist" value="<?= hsc($product_cartoonist) ?>">
-
+		
+		<!-- les types hidden permettent de transmettre les données via le formulaire sans que l'utilisateur ne le voit apparaitre dans ce dernier -->
 		<input type="hidden" name="product_id" value="<?= hsc($product_id) ?>">
 		<input type="hidden" name="formCU" value="ok">
 		<input type="submit" value="Enregistrer">
