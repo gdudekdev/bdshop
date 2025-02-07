@@ -16,6 +16,7 @@ $product_stock = "";
 $product_price = "";
 $product_publisher = "";
 $product_cartoonist = "";
+$product_slug = "";
 
 if (isset($_GET["id"]) && is_numeric($_GET["id"])) {	
 	$stmt = $db->prepare("SELECT * FROM table_product WHERE product_id = :product_id");
@@ -35,6 +36,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 		$product_price = $row["product_price"];
 		$product_publisher = $row["product_publisher"];
 		$product_cartoonist = $row["product_cartoonist"];
+		$product_slug = $row["product_slug"];
 	}
 }
 ?>
@@ -127,6 +129,8 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 		<input type="text" name="product_publisher" id="product_publisher" value="<?= hsc($product_publisher) ?>">
 		<label for="product_cartoonist">Dessinateur</label>
 		<input type="text" name="product_cartoonist" id="product_cartoonist" value="<?= hsc($product_cartoonist) ?>">
+		<label for="product_slug">Références</label>
+		<input type="text" name="product_slug" id="product_slug" value="<?= hsc($product_cartoonist) ?>">
 		
 		<!-- les types hidden permettent de transmettre les données via le formulaire sans que l'utilisateur ne le voit apparaitre dans ce dernier -->
 		<input type="hidden" name="product_id" value="<?= hsc($product_id) ?>">
