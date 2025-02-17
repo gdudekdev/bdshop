@@ -11,7 +11,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 </head>
 <body>
     <h1>Backoffice</h1>
-    <button><a href="product/index.php">Gérer les produits</a></button>
-    <button><a href="logout.php">Se déconnecter</a></button>
+    <a href="product/index.php">Gérer les produits</a>
+    <a href="logout.php">Se déconnecter</a>
 </body>
 </html>
