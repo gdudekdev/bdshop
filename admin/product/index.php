@@ -45,6 +45,12 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
         <?php if ($currentPage < $total_pages) { ?>
             <a href="<?= $baseUrl ?>?page=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
         <?php } ?>
+        
+        <form action="<?= $baseUrl ?>" method="get" class="page-form">
+            <input type="number" name="page" min="1" max="<?= $total_pages ?>" value="<?= $currentPage ?>">
+            <input type="hidden" name="nbPerPage" value="<?= $nbPerPage ?>">
+            <input type="submit" value="Aller">
+        </form>
     </div>
     <?php return ob_get_clean();
 }
