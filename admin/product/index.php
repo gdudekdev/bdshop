@@ -72,6 +72,8 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
                 <option value="<?= $value ?>" <?= $nbPerPage == $value ? 'selected' : '' ?>><?= $value ?></option>
             <?php } ?>
         </select>
+        <input type="number" name="nbPerPage" min="1" value="<?= $nbPerPage ?>" placeholder="Autre...">
+        <input type="submit" value="Appliquer">
     </form>
     <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
     <table>
