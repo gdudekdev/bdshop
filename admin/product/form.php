@@ -124,13 +124,13 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 		<label for="product_price">Prix</label>
 		<input type="text" name="product_price" id="product_price" value="<?= hsc($product_price) ?>">
 		<label for="product_date">Date</label>
-		<input type="text" name="product_date" id="product_date" value="<?= hsc($product_date) ?>">
+		<input type="date" name="product_date" id="product_date" value="<?= hsc($product_date) ?>">
 		<label for="product_publisher">Publication</label>
 		<input type="text" name="product_publisher" id="product_publisher" value="<?= hsc($product_publisher) ?>">
 		<label for="product_cartoonist">Dessinateur</label>
 		<input type="text" name="product_cartoonist" id="product_cartoonist" value="<?= hsc($product_cartoonist) ?>">
 		<label for="product_slug">Références</label>
-		<input type="text" name="product_slug" id="product_slug" value="<?= hsc($product_cartoonist) ?>">
+		<input type="text" name="product_slug" id="product_slug" value="<?= hsc($product_slug) ?>">
 		
 		<!-- les types hidden permettent de transmettre les données via le formulaire sans que l'utilisateur ne le voit apparaitre dans ce dernier -->
 		<input type="hidden" name="product_id" value="<?= hsc($product_id) ?>">
