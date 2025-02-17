@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Redirects the user to the specified path.
  *
@@ -13,8 +12,7 @@
 function redirect($path){
     header('Location:' . $path);
     exit();
-}
-
+};
 
 /**
  * Escapes special characters in a string for use in HTML.
@@ -26,5 +24,5 @@ function redirect($path){
  * @return string The escaped string, or an empty string if the input was null.
  */
 function hsc($string){
-    return(is_null($string)?"":htmlspecialchars($string));
-}
+    return (is_null($string)?"":htmlspecialchars($string));
+};

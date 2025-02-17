@@ -81,7 +81,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
             border-radius: 4px;
         }
         input[type="submit"] {
-            background-color: #4CAF50;
+            background-color:hsl(279, 28.10%, 49.60%);
             color: white;
             padding: 12px 20px;
             border: none;
@@ -90,7 +90,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
             font-size: 16px;
         }
         input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: hsl(279, 27.10%, 39.80%);
         }
         a {
             display: inline-block;

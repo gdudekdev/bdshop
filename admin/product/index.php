@@ -74,6 +74,7 @@ $recordset = $stmt->fetchAll();
 </head>
 
 <body>
+<a href="../index.php" class="add-button">Retour</a>    
     <table>
         <tr>
             <th>References</th>
