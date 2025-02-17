@@ -28,37 +28,37 @@ $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $recordset = $stmt->fetchAll();
 
-function generatePagination($currentPage, $total_pages, $nbPerPage) {
+function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $defaultPerPage = 20) {
     ob_start();
     ?>
     <div class="pagination">
         <?php if ($currentPage > 1): ?>
-            <a href="?page=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
+            <a href="<?= $baseUrl ?>?page=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
         <?php endif; ?>
 
         <?php if ($currentPage > 3): ?>
-            <a href="?page=1&nbPerPage=<?= $nbPerPage ?>">1</a>
+            <a href="<?= $baseUrl ?>?page=1&nbPerPage=<?= $nbPerPage ?>">1</a>
             <?php if ($currentPage > 4): ?>
                 <span>...</span>
             <?php endif; ?>
         <?php endif; ?>
 
         <?php for ($i = max(1, $currentPage - 2); $i <= min($total_pages, $currentPage + 2); $i++): ?>
-            <a href="?page=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>" class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+            <a href="<?= $baseUrl ?>?page=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>" class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
         <?php endfor; ?>
 
         <?php if ($currentPage < $total_pages - 2): ?>
             <?php if ($currentPage < $total_pages - 3): ?>
                 <span>...</span>
             <?php endif; ?>
-            <a href="?page=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
+            <a href="<?= $baseUrl ?>?page=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
         <?php endif; ?>
 
         <?php if ($currentPage < $total_pages): ?>
-            <a href="?page=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
+            <a href="<?= $baseUrl ?>?page=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
         <?php endif; ?>
 
-        <form action="index.php" method="get" class="page-form">
+        <form action="<?= $baseUrl ?>" method="get" class="page-form">
             <input type="number" name="page" min="1" max="<?= $total_pages ?>" value="<?= $currentPage ?>">
             <input type="hidden" name="nbPerPage" value="<?= $nbPerPage ?>">
             <input type="submit" value="Go">
@@ -196,7 +196,7 @@ function generatePagination($currentPage, $total_pages, $nbPerPage) {
     </form>
 </div>
 
-<?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
+<?= generatePagination($currentPage, $total_pages, $nbPerPage, 'index.php', $defaultPerPage) ?>
 
 <table>
     <tr>
@@ -236,7 +236,7 @@ function generatePagination($currentPage, $total_pages, $nbPerPage) {
     <?php } ?>
 </table>
 
-<?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
+<?= generatePagination($currentPage, $total_pages, $nbPerPage, 'index.php', $defaultPerPage) ?>
 
 </body>
 
