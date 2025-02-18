@@ -17,38 +17,37 @@ $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $recordset = $stmt->fetchAll();
 
-function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php') {
+function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php',$param="page") {
     ob_start(); ?>
     <div class="pagination">
         <?php if ($currentPage > 1) { ?>
-            <a href="<?= $baseUrl ?>?page=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
         <?php } ?>
 
         <?php if ($currentPage > 3) { ?>
-            <a href="<?= $baseUrl ?>?page=1&nbPerPage=<?= $nbPerPage ?>">1</a>
+            <a href="<?= $baseUrl ?>?<?= $param?>=1&nbPerPage=<?= $nbPerPage ?>">1</a>
             <?php if ($currentPage > 4) { ?>
                 <span>...</span>
             <?php } ?>
         <?php } ?>
 
         <?php for ($i = max(1, $currentPage - 2); $i <= min($total_pages, $currentPage + 2); $i++) { ?>
-            <a href="<?= $baseUrl ?>?page=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>" class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>" class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
         <?php } ?>
 
         <?php if ($currentPage < $total_pages - 2) { ?>
             <?php if ($currentPage < $total_pages - 3) { ?>
                 <span>...</span>
             <?php } ?>
-            <a href="<?= $baseUrl ?>?page=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
         <?php } ?>
 
         <?php if ($currentPage < $total_pages) { ?>
-            <a href="<?= $baseUrl ?>?page=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
         <?php } ?>
         
         <form action="<?= $baseUrl ?>" method="get" class="page-form">
             <input type="number" name="page" min="1" max="<?= $total_pages ?>" value="<?= $currentPage ?>">
-            <input type="hidden" name="nbPerPage" value="<?= $nbPerPage ?>">
             <input type="submit" value="Aller">
         </form>
     </div>
@@ -72,8 +71,6 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
                 <option value="<?= $value ?>" <?= $nbPerPage == $value ? 'selected' : '' ?>><?= $value ?></option>
             <?php } ?>
         </select>
-        <input type="number" name="nbPerPage" min="1" value="<?= $nbPerPage ?>" placeholder="Autre...">
-        <input type="submit" value="Appliquer">
     </form>
     <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
     <table>
