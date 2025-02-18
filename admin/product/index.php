@@ -4,11 +4,16 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 
 $defaultPerPage = 20;
+// Nombre de page via le dropdown
 $nbPerPage = filter_input(INPUT_GET, 'nbPerPage', FILTER_VALIDATE_INT) ?: $defaultPerPage;
+// Page actuellement sélectionnée
 $currentPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
 $offset = ($currentPage - 1) * $nbPerPage;
 
-$total_products = $db->query("SELECT COUNT(*) FROM table_product")->fetchColumn();
+// définition des paramètres nécessaires pour la pagination
+$total_products_stmt = $db->prepare("SELECT COUNT(*) FROM table_product");
+$total_products_stmt->execute();
+$total_products = $total_products_stmt->fetch()[0];
 $total_pages = max(1, ceil($total_products / $nbPerPage));
 
 $stmt = $db->prepare("SELECT * FROM table_product ORDER BY product_id DESC LIMIT :offset, :nbPerPage");
@@ -16,43 +21,6 @@ $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $recordset = $stmt->fetchAll();
-
-function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php',$param="page") {
-    ob_start(); ?>
-    <div class="pagination">
-        <?php if ($currentPage > 1) { ?>
-            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
-        <?php } ?>
-
-        <?php if ($currentPage > 3) { ?>
-            <a href="<?= $baseUrl ?>?<?= $param?>=1&nbPerPage=<?= $nbPerPage ?>">1</a>
-            <?php if ($currentPage > 4) { ?>
-                <span>...</span>
-            <?php } ?>
-        <?php } ?>
-
-        <?php for ($i = max(1, $currentPage - 2); $i <= min($total_pages, $currentPage + 2); $i++) { ?>
-            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>" class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
-        <?php } ?>
-
-        <?php if ($currentPage < $total_pages - 2) { ?>
-            <?php if ($currentPage < $total_pages - 3) { ?>
-                <span>...</span>
-            <?php } ?>
-            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
-        <?php } ?>
-
-        <?php if ($currentPage < $total_pages) { ?>
-            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
-        <?php } ?>
-        
-        <form action="<?= $baseUrl ?>" method="get" class="page-form">
-            <input type="number" name="page" min="1" max="<?= $total_pages ?>" value="<?= $currentPage ?>">
-            <input type="submit" value="Aller">
-        </form>
-    </div>
-    <?php return ob_get_clean();
-}
 ?>
 <!DOCTYPE html>
 <html lang="fr">

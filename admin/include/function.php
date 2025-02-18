@@ -26,3 +26,50 @@ function redirect($path){
 function hsc($string){
     return (is_null($string)?"":htmlspecialchars($string));
 };
+
+/**
+ * 
+ * 
+ * @param mixed $currentPage : à lire directement via method GET sur l'attribut param
+ * @param mixed $total_pages : valeur calculée au préalable dans le modèle
+ * @param mixed $nbPerPage : à définir par l'utilisateur;
+ * @param mixed $baseUrl :l'url auquel va renvoyer les liens
+ * @param mixed $param :attribut name que l'on va utiliser via GET (le même que pour currentPage)
+ * @return bool|string
+ */
+function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php',$param="page") {
+    ob_start(); ?>
+    <div class="pagination">
+        <?php if ($currentPage > 1) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
+        <?php } ?>
+
+        <?php if ($currentPage > 3) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param?>=1&nbPerPage=<?= $nbPerPage ?>">1</a>
+            <?php if ($currentPage > 4) { ?>
+                <span>...</span>
+            <?php } ?>
+        <?php } ?>
+
+        <?php for ($i = max(1, $currentPage - 2); $i <= min($total_pages, $currentPage + 2); $i++) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>" class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+        <?php } ?>
+
+        <?php if ($currentPage < $total_pages - 2) { ?>
+            <?php if ($currentPage < $total_pages - 3) { ?>
+                <span>...</span>
+            <?php } ?>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
+        <?php } ?>
+
+        <?php if ($currentPage < $total_pages) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
+        <?php } ?>
+        
+        <form action="<?= $baseUrl ?>" method="get" class="page-form">
+            <input type="number" name="page" min="1" max="<?= $total_pages ?>" value="<?= $currentPage ?>">
+            <input type="submit" value="Aller">
+        </form>
+    </div>
+    <?php return ob_get_clean();
+}
