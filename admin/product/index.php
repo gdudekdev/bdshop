@@ -51,7 +51,7 @@ $recordset = $stmt->fetchAll();
         </tr>
         <?php foreach ($recordset as $row) { ?>
             <tr>
-                <?php foreach ($columns as $key) { ?>
+                <?php foreach ($columns as $key) { ?> 
                     <td><?= hsc($row[$key]) ?></td>
                 <?php } ?>
                 <td class="action-links">
