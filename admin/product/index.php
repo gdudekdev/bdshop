@@ -10,11 +10,13 @@ $nbPerPage = filter_input(INPUT_GET, 'nbPerPage', FILTER_VALIDATE_INT) ?: $defau
 $currentPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
 $offset = ($currentPage - 1) * $nbPerPage;
 
+
 // définition des paramètres nécessaires pour la pagination
 $total_products_stmt = $db->prepare("SELECT COUNT(*) FROM table_product");
 $total_products_stmt->execute();
 $total_products = $total_products_stmt->fetch()[0];
 $total_pages = max(1, ceil($total_products / $nbPerPage));
+
 
 $stmt = $db->prepare("SELECT * FROM table_product ORDER BY product_id DESC LIMIT :offset, :nbPerPage");
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
