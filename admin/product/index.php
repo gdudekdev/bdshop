@@ -10,14 +10,13 @@ $nbPerPage = filter_input(INPUT_GET, 'nbPerPage', FILTER_VALIDATE_INT) ?: $defau
 $currentPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
 $offset = ($currentPage - 1) * $nbPerPage;
 
-
 // définition des paramètres nécessaires pour la pagination
 $total_products_stmt = $db->prepare("SELECT COUNT(*) FROM table_product");
 $total_products_stmt->execute();
 $total_products = $total_products_stmt->fetch()[0];
 $total_pages = max(1, ceil($total_products / $nbPerPage));
 
-
+// Requête correspondant au numéro de la page
 $stmt = $db->prepare("SELECT * FROM table_product ORDER BY product_id DESC LIMIT :offset, :nbPerPage");
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
@@ -26,12 +25,14 @@ $recordset = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produits</title>
     <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
     <a href="../index.php" class="add-button">Retour</a>
     <form action="index.php" method="get" class="per-page-form">
@@ -42,7 +43,7 @@ $recordset = $stmt->fetchAll();
             <?php } ?>
         </select>
     </form>
-    <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
+    <?= generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $param = "page") ?>
     <table>
         <tr>
             <?php $columns = ["References" => "product_slug", "Date" => "product_date", "Titre" => "product_name", "Serie" => "product_serie", "Volume" => "product_volume", "Auteur" => "product_author", "Description" => "product_description", "Resume" => "product_resume", "Stock" => "product_stock", "Prix" => "product_price", "Publication" => "product_publisher", "Dessinateur" => "product_cartoonist"];
@@ -53,7 +54,7 @@ $recordset = $stmt->fetchAll();
         </tr>
         <?php foreach ($recordset as $row) { ?>
             <tr>
-                <?php foreach ($columns as $key) { ?> 
+                <?php foreach ($columns as $key) { ?>
                     <td><?= hsc($row[$key]) ?></td>
                 <?php } ?>
                 <td class="action-links">
@@ -65,4 +66,5 @@ $recordset = $stmt->fetchAll();
     </table>
     <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
 </body>
+
 </html>

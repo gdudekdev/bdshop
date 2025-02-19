@@ -39,6 +39,28 @@ function hsc($string)
  * @param mixed $param : attribut name que l'on va utiliser via GET (le même que pour currentPage)
  * @return bool|string
  */
+// A PLACER DANS LE MODELE DE LA PAGE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// $defaultPerPage = 20;
+// // Nombre de page via le dropdown
+// $nbPerPage = filter_input(INPUT_GET, 'nbPerPage', FILTER_VALIDATE_INT) ?: $defaultPerPage;
+// // Page actuellement sélectionnée
+// $currentPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
+// $offset = ($currentPage - 1) * $nbPerPage;
+
+// // définition des paramètres nécessaires pour la pagination
+// $total_products_stmt = $db->prepare("SELECT COUNT(*) FROM table_product");
+// $total_products_stmt->execute();
+// $total_products = $total_products_stmt->fetch()[0];
+// $total_pages = max(1, ceil($total_products / $nbPerPage));
+
+// // Requête correspondant au numéro de la page
+// $stmt = $db->prepare("SELECT * FROM table_product ORDER BY product_id DESC LIMIT :offset, :nbPerPage");
+// $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+// $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
+// $stmt->execute();
+// $recordset = $stmt->fetchAll();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $param = "page")
 {
     if ($currentPage < 1) {
@@ -76,11 +98,6 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
             <?php if ($currentPage < $total_pages) { ?>
                 <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
             <?php } ?>
-
-            <form action="<?= $baseUrl ?>" method="get" class="page-form">
-                <input type="number" name="page" min="1" max="<?= $total_pages ?>" value="<?= $currentPage ?>">
-                <input type="submit" value="Aller">
-            </form>
         </div>
         <?php return ob_get_clean();
     } else {
