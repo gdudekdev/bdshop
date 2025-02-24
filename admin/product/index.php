@@ -72,14 +72,16 @@ $recordset = $stmt->fetchAll();
     <a href="../index.php" class="add-button">Retour</a><br><br>
 
     <!-- Barre de recherche -->
-    <form action="index.php" method="post">
+    <form action="search.php" method="post">
         <label for="keyword"></label>
         <input type="text" name="keyword" id="keyword" value=<?= hsc($keyword);?>>
         <input type="submit" value="Rechercher">
     </form>
     <br>
+
     <!-- Lien de réinitialisation -->
     <a href="index.php" class="add-button">Réinitialiser</a>
+
     <!-- Dropdown nombre d'éléments par page -->
     <form action="index.php" method="get" class="per-page-form">
         <label for="nbPerPage">Éléments par page :</label>
@@ -89,6 +91,8 @@ $recordset = $stmt->fetchAll();
             <?php } ?>
         </select>
     </form>
+    
+    <!-- Pagination -->
     <div class="pagination">
         <?= generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $param = "page") ?>
     </div>
