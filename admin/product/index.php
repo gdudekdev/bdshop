@@ -43,7 +43,9 @@ $recordset = $stmt->fetchAll();
             <?php } ?>
         </select>
     </form>
-    <?= generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $param = "page") ?>
+    <div class="pagination">
+        <?= generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $param = "page") ?>
+    </div>
     <table>
         <tr>
             <?php $columns = ["References" => "product_slug", "Date" => "product_date", "Titre" => "product_name", "Serie" => "product_serie", "Volume" => "product_volume", "Auteur" => "product_author", "Description" => "product_description", "Resume" => "product_resume", "Stock" => "product_stock", "Prix" => "product_price", "Publication" => "product_publisher", "Dessinateur" => "product_cartoonist"];
@@ -64,7 +66,8 @@ $recordset = $stmt->fetchAll();
             </tr>
         <?php } ?>
     </table>
-    <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
+    <div class="pagination">
+        <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
+    </div>
 </body>
-
 </html>

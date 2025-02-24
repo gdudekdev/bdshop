@@ -71,7 +71,7 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
     }
     if ($total_pages > 1) {
         ob_start(); ?>
-        <div class="pagination">
+        
             <?php if ($currentPage > 1) { ?>
                 <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
             <?php } ?>
@@ -79,7 +79,7 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
             <?php if ($currentPage > 3) { ?>
                 <a href="<?= $baseUrl ?>?<?= $param ?>=1&nbPerPage=<?= $nbPerPage ?>">1</a>
                 <?php if ($currentPage > 4) { ?>
-                    <span>...</span>
+                    <span class='inactive'>...</span>
                 <?php } ?>
             <?php } ?>
 
@@ -90,7 +90,7 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
 
             <?php if ($currentPage < $total_pages - 2) { ?>
                 <?php if ($currentPage < $total_pages - 3) { ?>
-                    <span>...</span>
+                    <span class='inactive'>...</span>
                 <?php } ?>
                 <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
             <?php } ?>
@@ -98,7 +98,6 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
             <?php if ($currentPage < $total_pages) { ?>
                 <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
             <?php } ?>
-        </div>
         <?php return ob_get_clean();
     } else {
         return 0;
