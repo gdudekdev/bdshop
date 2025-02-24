@@ -3,6 +3,6 @@
         "minimap.background": "#00000000",
         "scrollbar.shadow": "#00000000"
     },
-    "editor.fontFamily": "JetBrains",
+    "editor.fontFamily": "JetBrains Mono Light",
     "editor.fontLigatures": true,
 }

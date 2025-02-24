@@ -3,8 +3,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/function.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 
-$defaultPerPage = 20;
+
+// PAGINATION
+
 // Nombre de page via le dropdown
+$defaultPerPage = 20;
 $nbPerPage = filter_input(INPUT_GET, 'nbPerPage', FILTER_VALIDATE_INT) ?: $defaultPerPage;
 // Page actuellement sélectionnée
 $currentPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
@@ -16,13 +19,31 @@ $total_products_stmt->execute();
 $total_products = $total_products_stmt->fetch()[0];
 $total_pages = max(1, ceil($total_products / $nbPerPage));
 
-// Requête correspondant au numéro de la page
-$stmt = $db->prepare("SELECT * FROM table_product ORDER BY product_id DESC LIMIT :offset, :nbPerPage");
+
+// RECHERCHE
+$sql = "SELECT * FROM table_product WHERE (1=1) ";
+
+if (isset($_POST['keyword'])){
+    $sql .= "AND product_name LIKE :keyword COLLATE utf8mb3_general_ci
+            ";
+}
+
+
+$sql .= "ORDER BY product_id DESC LIMIT :offset, :nbPerPage";
+
+// Requête PAGINATION + RECHERCHE
+$stmt = $db->prepare($sql);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
+if(isset($_POST['keyword'])){
+    $stmt -> bindValue(':keyword','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
+}
 $stmt->execute();
 $recordset = $stmt->fetchAll();
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -35,6 +56,15 @@ $recordset = $stmt->fetchAll();
 
 <body>
     <a href="../index.php" class="add-button">Retour</a>
+
+    <!-- Barre de recherche -->
+    <form action="index.php" method="post">
+        <label for="keyword"></label>
+        <input type="text" name="keyword" id="keyword">
+
+
+        <input type="submit" value="Rechercher">
+    </form>
     <form action="index.php" method="get" class="per-page-form">
         <label for="nbPerPage">Éléments par page :</label>
         <select name="nbPerPage" id="nbPerPage" onchange="this.form.submit()">
@@ -70,4 +100,5 @@ $recordset = $stmt->fetchAll();
         <?= generatePagination($currentPage, $total_pages, $nbPerPage) ?>
     </div>
 </body>
+
 </html>
