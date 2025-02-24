@@ -27,7 +27,7 @@ if (isset($_POST['keyword'])){
     $sql .= "AND(product_name   LIKE :keyword1 COLLATE utf8mb3_general_ci
              OR  product_serie  LIKE :keyword2 COLLATE utf8mb3_general_ci
              OR  product_author LIKE :keyword3 COLLATE utf8mb3_general_ci
-             )
+             OR  product_slug   LIKE :keyword4 COLLATE utf8mb3_general_ci)
             ";
 }
 
@@ -42,6 +42,7 @@ if(isset($_POST['keyword'])){
     $stmt -> bindValue(':keyword1','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
     $stmt -> bindValue(':keyword2','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
     $stmt -> bindValue(':keyword3','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
+    $stmt -> bindValue(':keyword4','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
 }
 $stmt->execute();
 $recordset = $stmt->fetchAll();
