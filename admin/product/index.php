@@ -22,13 +22,22 @@ $total_pages = max(1, ceil($total_products / $nbPerPage));
 
 // RECHERCHE
 $sql = "SELECT * FROM table_product WHERE (1=1) ";
+$keyword = "";
+$bind = [];
 
-if (isset($_POST['keyword'])){
+if(isset($_POST['keyword'])){
+    $keyword = $_POST['keyword'];
+}
+if (!empty($keyword)){
     $sql .= "AND(product_name   LIKE :keyword1 COLLATE utf8mb3_general_ci
              OR  product_serie  LIKE :keyword2 COLLATE utf8mb3_general_ci
              OR  product_author LIKE :keyword3 COLLATE utf8mb3_general_ci
-             OR  product_slug   LIKE :keyword4 COLLATE utf8mb3_general_ci)
+             OR  product_slug   LIKE :keyword4 COLLATE utf8mb3_general_ci )
             ";
+    $bind[":keyword1"]='%' . $keyword . '%';
+    $bind[":keyword2"]='%' . $keyword . '%';
+    $bind[":keyword3"]='%' . $keyword . '%';
+    $bind[":keyword4"]='%' . $keyword . '%';
 }
 
 
@@ -38,11 +47,10 @@ $sql .= "ORDER BY product_id DESC LIMIT :offset, :nbPerPage";
 $stmt = $db->prepare($sql);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':nbPerPage', $nbPerPage, PDO::PARAM_INT);
-if(isset($_POST['keyword'])){
-    $stmt -> bindValue(':keyword1','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
-    $stmt -> bindValue(':keyword2','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
-    $stmt -> bindValue(':keyword3','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
-    $stmt -> bindValue(':keyword4','%' . $_POST['keyword'] . '%' , PDO::PARAM_STR);
+if(!empty($keyword)){
+    foreach ($bind as $key=>$value) {
+        $stmt -> bindValue( $key,$value , PDO::PARAM_STR);
+    }
 }
 $stmt->execute();
 $recordset = $stmt->fetchAll();
@@ -61,16 +69,18 @@ $recordset = $stmt->fetchAll();
 </head>
 
 <body>
-    <a href="../index.php" class="add-button">Retour</a>
+    <a href="../index.php" class="add-button">Retour</a><br><br>
 
     <!-- Barre de recherche -->
     <form action="index.php" method="post">
         <label for="keyword"></label>
-        <input type="text" name="keyword" id="keyword">
-
-
+        <input type="text" name="keyword" id="keyword" value=<?= hsc($keyword);?>>
         <input type="submit" value="Rechercher">
     </form>
+    <br>
+    <!-- Lien de réinitialisation -->
+    <a href="index.php" class="add-button">Réinitialiser</a>
+    <!-- Dropdown nombre d'éléments par page -->
     <form action="index.php" method="get" class="per-page-form">
         <label for="nbPerPage">Éléments par page :</label>
         <select name="nbPerPage" id="nbPerPage" onchange="this.form.submit()">
