@@ -24,9 +24,8 @@ $total_pages = max(1, ceil($total_products / $nbPerPage));
 $sql = "SELECT * FROM table_product WHERE (1=1) ";
 $keyword = "";
 $bind = [];
-
-if(isset($_POST['keyword'])){
-    $keyword = $_POST['keyword'];
+if(isset($_COOKIE['keyword'])){
+    $keyword = $_COOKIE['keyword'];
 }
 if (!empty($keyword)){
     $sql .= "AND(product_name   LIKE :keyword1 COLLATE utf8mb3_general_ci
@@ -91,7 +90,7 @@ $recordset = $stmt->fetchAll();
             <?php } ?>
         </select>
     </form>
-    
+
     <!-- Pagination -->
     <div class="pagination">
         <?= generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = 'index.php', $param = "page") ?>
