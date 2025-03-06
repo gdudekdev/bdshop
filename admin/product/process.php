@@ -4,6 +4,39 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 
 if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
+
+    if (isset($_FILES['product_image'])) {
+        var_dump($_FILES['product_image']);
+
+        // On va vérifier si le fichier uploadé est bien une image et que l'upload s'est bien passé 
+        // Vérfication de l'upload de l'image
+        if ($_FILES['product_image']['error'] != 0) {
+            die("Erreur lors de l'upload de l'image");
+        }
+        // Vérification de l'extension de l'image
+        $extension = pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION);
+
+        // Dans le cas du jpg, l'extension que l'on récupère passe à jpeg, notre condition ne fonctionnerait donc pas: on doit donc modifier avec str replace notre extension pour pouvoir la comparer avec le type de notre fichier(image/jpeg), on vérifie auss si l'extension est bien parmis celle que l'on accepte
+        if (
+            ("image/" . str_replace("jpg", "jpeg", strtolower($extension)) !== $_FILES['product_image']['type'])
+            && (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+        ) {
+            die("L'extension de l'image n'est pas valide");
+        }
+
+        // On crée le nom de notre image en le nettoyant
+        $filename = cleanFilename("bdshop_" . $_POST["product_series"] . "_" . $_POST["product_name"]);
+        
+        // On vérifie si il n'y a pas de doublon
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $_FILES['product_image']['name'])) {
+            $filename .= "_" . uniqid();
+        }
+        // Si l'image est bien uploadée, on la déplace dans le dossier upload
+        move_uploaded_file($_FILES['product_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $_FILES['product_image']['name']);
+    }
+
+    exit();
+
     $fields = [
         "product_serie",
         "product_name",

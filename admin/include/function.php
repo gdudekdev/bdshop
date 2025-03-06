@@ -71,35 +71,51 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
     }
     if ($total_pages > 1) {
         ob_start(); ?>
-        
-            <?php if ($currentPage > 1) { ?>
-                <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
-            <?php } ?>
 
-            <?php if ($currentPage > 3) { ?>
-                <a href="<?= $baseUrl ?>?<?= $param ?>=1&nbPerPage=<?= $nbPerPage ?>">1</a>
-                <?php if ($currentPage > 4) { ?>
-                    <span class='inactive'>...</span>
-                <?php } ?>
-            <?php } ?>
+        <?php if ($currentPage > 1) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage - 1 ?>&nbPerPage=<?= $nbPerPage ?>">&laquo; Précédent</a>
+        <?php } ?>
 
-            <?php for ($i = max(1, $currentPage - 2); $i <= min($total_pages, $currentPage + 2); $i++) { ?>
-                <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>"
-                    class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+        <?php if ($currentPage > 3) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param ?>=1&nbPerPage=<?= $nbPerPage ?>">1</a>
+            <?php if ($currentPage > 4) { ?>
+                <span class='inactive'>...</span>
             <?php } ?>
+        <?php } ?>
 
-            <?php if ($currentPage < $total_pages - 2) { ?>
-                <?php if ($currentPage < $total_pages - 3) { ?>
-                    <span class='inactive'>...</span>
-                <?php } ?>
-                <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
-            <?php } ?>
+        <?php for ($i = max(1, $currentPage - 2); $i <= min($total_pages, $currentPage + 2); $i++) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $i ?>&nbPerPage=<?= $nbPerPage ?>"
+                class="<?= $i == $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+        <?php } ?>
 
-            <?php if ($currentPage < $total_pages) { ?>
-                <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
+        <?php if ($currentPage < $total_pages - 2) { ?>
+            <?php if ($currentPage < $total_pages - 3) { ?>
+                <span class='inactive'>...</span>
             <?php } ?>
+            <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $total_pages ?>&nbPerPage=<?= $nbPerPage ?>"><?= $total_pages ?></a>
+        <?php } ?>
+
+        <?php if ($currentPage < $total_pages) { ?>
+            <a href="<?= $baseUrl ?>?<?= $param ?>=<?= $currentPage + 1 ?>&nbPerPage=<?= $nbPerPage ?>">Suivant &raquo;</a>
+        <?php } ?>
         <?php return ob_get_clean();
     } else {
         return 0;
     }
+}
+
+/**
+ *  Cleans a string to make it a valid filename.
+ * 
+ * @param mixed $str
+ */
+function cleanFilename($str){
+    $result = strtolower($str);
+
+    $charKo = [' ', '/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '.', 'é', 'è', 'ê', 'à', 'ç', 'ù', 'ô', 'î', 'ï', 'â', 'ä', 'ë', 'ü', 'û', 'ÿ', 'œ', '€'];
+    $charOk = ['-', '-', '-', '', '', '', '', '', '', '', '', '', 'e', 'e', 'e', 'a', 'c', 'u', 'o', 'i', 'i', 'a', 'a', 'e', 'u', 'u', 'y', 'oe', 'euro'];
+    
+    $result = str_replace($charKo, $charOk, $result);
+    
+    return $result;
 }

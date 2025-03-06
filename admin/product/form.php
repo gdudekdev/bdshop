@@ -17,6 +17,7 @@ $product_price = "";
 $product_publisher = "";
 $product_cartoonist = "";
 $product_slug = "";
+$product_image = "";
 
 if (isset($_GET["id"]) && is_numeric($_GET["id"])) {    
     $stmt = $db->prepare("SELECT * FROM table_product WHERE product_id = :product_id");
@@ -106,7 +107,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
 </head>
 
 <body>
-    <form action="process.php" method="post">
+    <form action="process.php" method="post" enctype="multipart/form-data">
         <label for="product_serie">Serie</label>
         <input type="text" name="product_serie" id="product_serie" value="<?= hsc($product_serie) ?>">
         
@@ -142,6 +143,9 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
         
         <label for="product_slug">Références</label>
         <input type="text" name="product_slug" id="product_slug" value="<?= hsc($product_slug) ?>">
+        
+        <label for="product_image">Image</label>
+        <input type="file" name="product_image" id="product_image" value="<?= hsc($product_image) ?>" accept="image/*">
         
         <input type="hidden" name="product_id" value="<?= hsc($product_id) ?>">
         <input type="hidden" name="formCU" value="ok">
