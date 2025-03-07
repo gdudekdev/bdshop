@@ -25,14 +25,21 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
         }
 
         // On crée le nom de notre image en le nettoyant
-        $filename = cleanFilename("bdshop_" . $_POST["product_series"] . "_" . $_POST["product_name"]);
+        $filename = cleanFilename("bdshop_" . $_POST["product_serie"] . "_" . $_POST["product_name"]);
+        
+
         
         // On vérifie si il n'y a pas de doublon
-        if (file_exists($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $_FILES['product_image']['name'])) {
-            $filename .= "_" . uniqid();
+        $count = 1;
+        while(file_exists($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . ($count>1 ? "(". $count .")":""). "." . $extension)) { 
+            $count++;
         }
+        if($count > 1) {
+            $filename .= "(" . $count . ")";
+        }
+        var_dump($count);
         // Si l'image est bien uploadée, on la déplace dans le dossier upload
-        move_uploaded_file($_FILES['product_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $_FILES['product_image']['name']);
+        move_uploaded_file($_FILES['product_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
     }
 
     exit();
