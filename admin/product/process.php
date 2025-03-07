@@ -14,33 +14,74 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
             die("Erreur lors de l'upload de l'image");
         }
         // Vérification de l'extension de l'image
-        $extension = pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION));
 
         // Dans le cas du jpg, l'extension que l'on récupère passe à jpeg, notre condition ne fonctionnerait donc pas: on doit donc modifier avec str replace notre extension pour pouvoir la comparer avec le type de notre fichier(image/jpeg), on vérifie auss si l'extension est bien parmis celle que l'on accepte
         if (
-            ("image/" . str_replace("jpg", "jpeg", strtolower($extension)) !== $_FILES['product_image']['type'])
-            && (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+            ("image/" . str_replace("jpg", "jpeg", $extension) !== $_FILES['product_image']['type'])
+            && (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
         ) {
             die("L'extension de l'image n'est pas valide");
         }
 
         // On crée le nom de notre image en le nettoyant
+        // TODO extension en webp et prefixe pour la dimension de l'image
         $filename = cleanFilename("bdshop_" . $_POST["product_serie"] . "_" . $_POST["product_name"]);
-        
 
-        
+
+
         // On vérifie si il n'y a pas de doublon
         $count = 1;
-        while(file_exists($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . ($count>1 ? "(". $count .")":""). "." . $extension)) { 
+        while (file_exists($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . ($count > 1 ? "(" . $count . ")" : "") . "." . $extension)) {
             $count++;
         }
-        if($count > 1) {
+        if ($count > 1) {
             $filename .= "(" . $count . ")";
         }
         var_dump($count);
-        // Si l'image est bien uploadée, on la déplace dans le dossier upload
+        // Si l'image est bien uploadée et après changement de son nom, on la déplace dans le dossier upload
         move_uploaded_file($_FILES['product_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
-    }
+
+        // TRAITEMENT DE L'IMAGE 
+        // On va redimensionner l'image
+
+        // Récupération des dimensions de l'image
+        $src = getimagesize($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
+        $srcWidth = $src[0];
+        $srcHeight = $src[1];
+
+        // Taille maximale de notre image finale
+        $destWidth = 1200;
+        $destHeight = 900;
+
+        // Gestion des différents formats de l'image
+        $ratio = $srcWidth / $srcHeight;
+
+        if ($ratio > 1) {
+            $destHeight = round($destWidth / $ratio);
+        } else {
+            $destWidth = round($destHeight * $ratio);
+        }
+
+        // Initialisation des sources des images
+        $srcX = 0;
+        $srcY = 0;
+        $destX = 0;
+        $destY = 0;
+
+        // Création de l'image de destination
+        $dest = imagecreatetruecolor($destWidth, $destHeight);
+
+        // On charge l'image source
+        $imagecreatefromCustom = "imagecreatefrom" . str_replace("jpg", "jpeg", $extension);
+        $src = $imagecreatefromCustom($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
+        
+        // Chargement de l'image source dans l'image de destination
+        imagecopyresampled($dest, $src, $destX, $destY, $srcX, $srcY, $destWidth, $destHeight, $srcWidth, $srcHeight);
+        
+        // Enregistrement de l'image finale au format webp dans le dossier de destination
+        imagewebp($dest, $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . ".webp", 100);
+    };
 
     exit();
 

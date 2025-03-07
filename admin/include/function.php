@@ -104,6 +104,7 @@ function generatePagination($currentPage, $total_pages, $nbPerPage, $baseUrl = '
     }
 }
 
+
 /**
  *  Cleans a string to make it a valid filename.
  * 
@@ -119,3 +120,51 @@ function cleanFilename($str){
     
     return $result;
 }
+
+// function resize($source ,$destination){
+//     // On récupère les dimensions de l'image
+//     $source_size = getimagesize($source);
+//     $source_width = $source_size[0];
+//     $source_height = $source_size[1];
+
+//     // On définit les dimensions de l'image finale*
+//     $ratio = $source_width / $source_height;
+//     if($ratio > 1){
+//         $final_width = 200;
+//         $final_height = 200 / $ratio;
+//     } else {
+//         $final_height = 200;
+//         $final_width = 200 * $ratio;
+//     }
+
+//     // On crée une image vide aux dimensions finales
+//     $image_finale = imagecreatetruecolor($final_width, $final_height);
+
+//     // On charge l'image source
+//     switch($size['mime']){
+//         case 'image/jpeg':
+//             $image_source = imagecreatefromjpeg($path);
+//             break;
+//         case 'image/png':
+//             $image_source = imagecreatefrompng($path);
+//             break;
+//         case 'image/gif':
+//             $image_source = imagecreatefromgif($path);
+//             break;
+//         default:
+//             return false;
+//     }
+    
+//     // On redimensionne l'image source dans l'image finale
+//     imagecopyresampled($image_finale, $image_source, 0, 0, 0, 0, $final_width, $final_height, $width, $height);
+
+//     // On enregistre l'image finale
+//     imagewebp($image_finale, $destination);
+
+//     // On libère la mémoire
+//     imagedestroy($image_finale);
+//     imagedestroy($image_source);
+
+//     return $destination;
+
+// }
