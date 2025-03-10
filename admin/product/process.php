@@ -6,8 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
 
     if (isset($_FILES['product_image'])) {
-        var_dump($_FILES['product_image']);
-
+        $path = $_SERVER['DOCUMENT_ROOT'] . "/upload/";
         // On va vérifier si le fichier uploadé est bien une image et que l'upload s'est bien passé 
         // Vérfication de l'upload de l'image
         if ($_FILES['product_image']['error'] != 0) {
@@ -23,30 +22,26 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
         ) {
             die("L'extension de l'image n'est pas valide");
         }
-
+        
         // On crée le nom de notre image en le nettoyant
-        // TODO extension en webp et prefixe pour la dimension de l'image
-        $filename = cleanFilename("bdshop_" . $_POST["product_serie"] . "_" . $_POST["product_name"]);
-
-
+        $filename = cleanFilename( "lg-bdshop_" . $_POST["product_serie"] . "_" . $_POST["product_name"]);
 
         // On vérifie si il n'y a pas de doublon
         $count = 1;
-        while (file_exists($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . ($count > 1 ? "(" . $count . ")" : "") . "." . $extension)) {
+        while (file_exists($path . $filename . ($count > 1 ? "(" . $count . ")" : "") . "." . "webp")) {
             $count++;
         }
         if ($count > 1) {
             $filename .= "(" . $count . ")";
         }
-        var_dump($count);
         // Si l'image est bien uploadée et après changement de son nom, on la déplace dans le dossier upload
-        move_uploaded_file($_FILES['product_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
+        move_uploaded_file($_FILES['product_image']['tmp_name'], $path . $filename . "." . $extension);
 
         // TRAITEMENT DE L'IMAGE 
+        
         // On va redimensionner l'image
-
         // Récupération des dimensions de l'image
-        $src = getimagesize($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
+        $src = getimagesize($path . $filename . "." . $extension);
         $srcWidth = $src[0];
         $srcHeight = $src[1];
 
@@ -74,13 +69,19 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
 
         // On charge l'image source
         $imagecreatefromCustom = "imagecreatefrom" . str_replace("jpg", "jpeg", $extension);
-        $src = $imagecreatefromCustom($_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . "." . $extension);
+        $src = $imagecreatefromCustom($path . $filename . "." . $extension);
         
         // Chargement de l'image source dans l'image de destination
         imagecopyresampled($dest, $src, $destX, $destY, $srcX, $srcY, $destWidth, $destHeight, $srcWidth, $srcHeight);
         
         // Enregistrement de l'image finale au format webp dans le dossier de destination
-        imagewebp($dest, $_SERVER['DOCUMENT_ROOT'] . "/upload/" . $filename . ".webp", 100);
+        imagewebp($dest, $path . $filename . ".webp", 100);
+        
+
+        // On supprime l'image temporaire originale pour libérer de l'espace
+        if (file_exists($path . $filename . "." . $extension)) {
+            unlink($path . $filename . "." . $extension);
+        }
     };
 
     exit();

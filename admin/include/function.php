@@ -118,7 +118,7 @@ function cleanFilename($str){
     
     $result = str_replace($charKo, $charOk, $result);
     
-    return $result;
+    return trim($result,"_");
 }
 
 // function resize($source ,$destination){
