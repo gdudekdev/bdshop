@@ -66,8 +66,16 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
 
             if ($ratio > 1) {
                 $destHeight = round($destWidth / $ratio);
+                if($info['width']>= $srcWidth){
+                    $destWidth=$srcWidth;
+                    $destHeight=$srcHeight;
+                }
             } else {
                 $destWidth = round($destHeight * $ratio);
+                if($info['height']>= $srcHeight){
+                    $destWidth=$srcWidth;
+                    $destHeight=$srcHeight;
+                }
             }
 
             // Initialisation des sources des images
