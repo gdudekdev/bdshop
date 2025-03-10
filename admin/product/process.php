@@ -52,57 +52,54 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
         // On va redimensionner l'image
         // Récupération des dimensions de l'image
         foreach (IMG_CONFIG as $prefix => $info) {
+            $filePath = $path . $filename . "." . $extension;
+            $srcSize = getimagesize($filePath);
+            $srcWidth = $srcSize[0];
+            $srcHeight = $srcSize[1];
 
-            $src = getimagesize($path . $filename . "." . $extension);
-            $srcWidth = $src[0];
-            $srcHeight = $src[1];
-
-            // Taille maximale de notre image finale
             $destWidth = $info['width'];
             $destHeight = $info['height'];
 
-            // Gestion des différents formats de l'image
-            $ratio = $srcWidth / $srcHeight;
+            $ratioSrc = $srcWidth / $srcHeight;
+            $ratioDest = $destWidth / $destHeight;
 
-            if ($ratio > 1) {
-                $destHeight = round($destWidth / $ratio);
-                if($info['width']>= $srcWidth){
-                    $destWidth=$srcWidth;
-                    $destHeight=$srcHeight;
-                }
+            if ($ratioSrc > $ratioDest) {
+                // L'image source est plus large que nécessaire, on ajuste la largeur
+                $newHeight = $srcHeight;
+                $newWidth = round($srcHeight * $ratioDest);
+                $srcX = round(($srcWidth - $newWidth) / 2);
+                $srcY = 0;
             } else {
-                $destWidth = round($destHeight * $ratio);
-                if($info['height']>= $srcHeight){
-                    $destWidth=$srcWidth;
-                    $destHeight=$srcHeight;
-                }
+                // L'image source est plus haute que nécessaire, on ajuste la hauteur
+                $newWidth = $srcWidth;
+                $newHeight = round($srcWidth / $ratioDest);
+                $srcX = 0;
+                $srcY = round(($srcHeight - $newHeight) / 2);
             }
-
-            // Initialisation des sources des images
-            $srcX = 0;
-            $srcY = 0;
-            $destX = 0;
-            $destY = 0;
 
             // Création de l'image de destination
             $dest = imagecreatetruecolor($destWidth, $destHeight);
 
-            // On charge l'image source
-            $imagecreatefromCustom = "imagecreatefrom" . str_replace("jpg", "jpeg", $extension);
-            $src = $imagecreatefromCustom($path . $filename . "." . $extension);
+            // Chargement de l'image source
+            $imagecreatefrom = "imagecreatefrom" . str_replace("jpg", "jpeg", $extension);
+            $src = $imagecreatefrom($filePath);
 
-            // Chargement de l'image source dans l'image de destination
-            imagecopyresampled($dest, $src, $destX, $destY, $srcX, $srcY, $destWidth, $destHeight, $srcWidth, $srcHeight);
+            // Redimensionnement et crop
+            imagecopyresampled($dest, $src, 0, 0, $srcX, $srcY, $destWidth, $destHeight, $newWidth, $newHeight);
 
-            // Enregistrement de l'image finale au format webp dans le dossier de destination
-            imagewebp($dest,  $path . $prefix . "_" . $filename . ".webp", 100);
+            // Enregistrement en WebP
+            imagewebp($dest, $path . $prefix . "_" . $filename . ".webp", 100);
+
+            // Nettoyage
+            imagedestroy($dest);
+            imagedestroy($src);
         }
 
-
-        // On supprime l'image temporaire originale pour libérer de l'espace
-        if (file_exists($path . $filename . "." . $extension)) {
-            unlink($path . $filename . "." . $extension);
+        // Suppression de l'image originale
+        if (file_exists($filePath)) {
+            unlink($filePath);
         }
+
     }
     ;
 
