@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/function.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/config.php";
 
 if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
 
@@ -22,14 +23,23 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
         ) {
             die("L'extension de l'image n'est pas valide");
         }
-        
+
         // On crée le nom de notre image en le nettoyant
-        $filename = cleanFilename( "lg-bdshop_" . $_POST["product_serie"] . "_" . $_POST["product_name"]);
+        $filename = cleanFilename("bdshop_" . $_POST["product_serie"] . "_" . $_POST["product_name"]);
 
         // On vérifie si il n'y a pas de doublon
+        $is_file_search = true;
         $count = 1;
-        while (file_exists($path . $filename . ($count > 1 ? "(" . $count . ")" : "") . "." . "webp")) {
-            $count++;
+        while ($is_file_search) {
+            $is_file_search = false;
+            foreach (IMG_CONFIG as $key => $value) {
+                if (file_exists($path . $key . "_" . $filename . ($count > 1 ? "(" . $count . ")" : "") . ".webp")) {
+                    $is_file_search = true;
+                    break;
+                }
+            }
+            if ($is_file_search)
+                $count++;
         }
         if ($count > 1) {
             $filename .= "(" . $count . ")";
@@ -38,51 +48,55 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
         move_uploaded_file($_FILES['product_image']['tmp_name'], $path . $filename . "." . $extension);
 
         // TRAITEMENT DE L'IMAGE 
-        
+
         // On va redimensionner l'image
         // Récupération des dimensions de l'image
-        $src = getimagesize($path . $filename . "." . $extension);
-        $srcWidth = $src[0];
-        $srcHeight = $src[1];
+        foreach (IMG_CONFIG as $prefix => $info) {
 
-        // Taille maximale de notre image finale
-        $destWidth = 1200;
-        $destHeight = 900;
+            $src = getimagesize($path . $filename . "." . $extension);
+            $srcWidth = $src[0];
+            $srcHeight = $src[1];
 
-        // Gestion des différents formats de l'image
-        $ratio = $srcWidth / $srcHeight;
+            // Taille maximale de notre image finale
+            $destWidth = $info['width'];
+            $destHeight = $info['height'];
 
-        if ($ratio > 1) {
-            $destHeight = round($destWidth / $ratio);
-        } else {
-            $destWidth = round($destHeight * $ratio);
+            // Gestion des différents formats de l'image
+            $ratio = $srcWidth / $srcHeight;
+
+            if ($ratio > 1) {
+                $destHeight = round($destWidth / $ratio);
+            } else {
+                $destWidth = round($destHeight * $ratio);
+            }
+
+            // Initialisation des sources des images
+            $srcX = 0;
+            $srcY = 0;
+            $destX = 0;
+            $destY = 0;
+
+            // Création de l'image de destination
+            $dest = imagecreatetruecolor($destWidth, $destHeight);
+
+            // On charge l'image source
+            $imagecreatefromCustom = "imagecreatefrom" . str_replace("jpg", "jpeg", $extension);
+            $src = $imagecreatefromCustom($path . $filename . "." . $extension);
+
+            // Chargement de l'image source dans l'image de destination
+            imagecopyresampled($dest, $src, $destX, $destY, $srcX, $srcY, $destWidth, $destHeight, $srcWidth, $srcHeight);
+
+            // Enregistrement de l'image finale au format webp dans le dossier de destination
+            imagewebp($dest,  $path . $prefix . "_" . $filename . ".webp", 100);
         }
 
-        // Initialisation des sources des images
-        $srcX = 0;
-        $srcY = 0;
-        $destX = 0;
-        $destY = 0;
-
-        // Création de l'image de destination
-        $dest = imagecreatetruecolor($destWidth, $destHeight);
-
-        // On charge l'image source
-        $imagecreatefromCustom = "imagecreatefrom" . str_replace("jpg", "jpeg", $extension);
-        $src = $imagecreatefromCustom($path . $filename . "." . $extension);
-        
-        // Chargement de l'image source dans l'image de destination
-        imagecopyresampled($dest, $src, $destX, $destY, $srcX, $srcY, $destWidth, $destHeight, $srcWidth, $srcHeight);
-        
-        // Enregistrement de l'image finale au format webp dans le dossier de destination
-        imagewebp($dest, $path . $filename . ".webp", 100);
-        
 
         // On supprime l'image temporaire originale pour libérer de l'espace
         if (file_exists($path . $filename . "." . $extension)) {
             unlink($path . $filename . "." . $extension);
         }
-    };
+    }
+    ;
 
     exit();
 
