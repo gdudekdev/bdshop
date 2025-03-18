@@ -16,7 +16,7 @@ function cleanFilename($str)
       return trim($result, "_");
 }
 
-function uploadProductImage($file, $postData, $id, $db)
+function uploadProductImage($file, $postData, $id, $db ,$erase=true)
 {
       if (!isset($file['product_image'])) {
             return "Aucune image reçue";
@@ -32,7 +32,7 @@ function uploadProductImage($file, $postData, $id, $db)
             return "L'extension de l'image n'est pas valide";
       }
 
-      removeExistingProductImages($file, $postData, $id, $db);
+      if($erase)removeExistingProductImages($file, $postData, $id, $db);
       $filename = cleanFilename("bdshop_" . $postData["product_serie"] . "_" . $postData["product_name"]);
       $filename = resolveFilenameConflict($path, $filename);
 
@@ -125,13 +125,13 @@ function removeExistingProductImages($file, $postData, $db, $id)
         $stmt->execute();
 
         if ($row = $stmt->fetch()) {
-            $filename = pathinfo($row['product_image'], PATHINFO_FILENAME); // Extraire le nom de fichier sans l'extension
+            $filename = pathinfo($row['product_image'], PATHINFO_FILENAME);
             $path = $_SERVER['DOCUMENT_ROOT'] . "/upload/";
 
             foreach (IMG_CONFIG as $prefix => $config) {
-                $filePath = $path . $prefix . "_" . $filename . ".webp"; // Créer le chemin pour chaque variante d'image
+                $filePath = $path . $prefix . "_" . $filename . ".webp"; 
                 if (file_exists($filePath)) {
-                    unlink($filePath); // Supprimer le fichier
+                    unlink($filePath);
                 }
             }
 

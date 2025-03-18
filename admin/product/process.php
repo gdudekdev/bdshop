@@ -46,7 +46,9 @@ if (isset($_POST["formCU"]) && $_POST["formCU"] == "ok") {
     
     // 🔹 Vérifier que l’ID est bien défini avant l'upload
     if (!empty($id) && isset($_FILES['product_image'])) {
-        uploadProductImage($_FILES, $_POST, $id, $db);
+        $erase=false;
+        if(isset($_POST['image_erase']))$erase=true;
+        uploadProductImage($_FILES, $_POST, $id, $db ,$erase);
     }
     
 }
