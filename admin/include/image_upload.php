@@ -16,8 +16,7 @@ function cleanFilename($str)
       return trim($result, "_");
 }
 
-
-function uploadProductImage($file, $postData, $id ,$db)
+function uploadProductImage($file, $postData, $id, $db)
 {
       if (!isset($file['product_image'])) {
             return "Aucune image reçue";
@@ -33,6 +32,7 @@ function uploadProductImage($file, $postData, $id ,$db)
             return "L'extension de l'image n'est pas valide";
       }
 
+      removeExistingProductImages($file, $postData, $id, $db);
       $filename = cleanFilename("bdshop_" . $postData["product_serie"] . "_" . $postData["product_name"]);
       $filename = resolveFilenameConflict($path, $filename);
 
@@ -44,10 +44,10 @@ function uploadProductImage($file, $postData, $id ,$db)
             $stmt->bindValue(":product_image", $filename . ".webp");
             $stmt->bindValue(":product_id", $id, PDO::PARAM_INT);
             $stmt->execute();
-        } catch (PDOException $e) {
+      } catch (PDOException $e) {
             return "Erreur SQL : " . $e->getMessage();
-        }
-        
+      }
+
       return "Image uploadée et traitée avec succès";
 }
 
@@ -111,4 +111,39 @@ function processImage($path, $filename, $extension)
       if (file_exists($filePath)) {
             unlink($filePath);
       }
+}
+function removeExistingProductImages($file, $postData, $db, $id)
+{
+    if ($id == 0) {
+        return "Pas d'images à nettoyer";
+    }
+    try {
+        $stmt = $db->prepare("SELECT product_image FROM table_product WHERE product_id = :product_id AND 
+                                                                    product_image IS NOT NULL AND
+                                                                    product_image <> ''");
+        $stmt->bindValue(":product_id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        if ($row = $stmt->fetch()) {
+            $filename = pathinfo($row['product_image'], PATHINFO_FILENAME); // Extraire le nom de fichier sans l'extension
+            $path = $_SERVER['DOCUMENT_ROOT'] . "/upload/";
+
+            foreach (IMG_CONFIG as $prefix => $config) {
+                $filePath = $path . $prefix . "_" . $filename . ".webp"; // Créer le chemin pour chaque variante d'image
+                if (file_exists($filePath)) {
+                    unlink($filePath); // Supprimer le fichier
+                }
+            }
+
+            $updateStmt = $db->prepare("UPDATE table_product SET product_image = NULL WHERE product_id = :product_id");
+            $updateStmt->bindValue(":product_id", $id, PDO::PARAM_INT);
+            $updateStmt->execute();
+
+            return "Les images ont été nettoyées avec succès";
+        } else {
+            return "Aucune image à nettoyer";
+        }
+    } catch (PDOException $e) {
+        return "Erreur SQL : " . $e->getMessage();
+    }
 }
