@@ -3,7 +3,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/function.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/protect.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/include/connect.php";
 
-
 // PAGINATION
 
 // Nombre de page via le dropdown
@@ -18,7 +17,6 @@ $total_products_stmt = $db->prepare("SELECT COUNT(*) FROM table_product");
 $total_products_stmt->execute();
 $total_products = $total_products_stmt->fetch()[0];
 $total_pages = max(1, ceil($total_products / $nbPerPage));
-
 
 // RECHERCHE
 $sql = "SELECT * FROM table_product WHERE (1=1) ";
@@ -40,7 +38,6 @@ if (!empty($keyword)){
     $bind[":keyword4"]='%' . $keyword . '%';
 }
 
-
 $sql .= "ORDER BY product_id DESC LIMIT :offset, :nbPerPage";
 
 // Requête PAGINATION + RECHERCHE
@@ -55,7 +52,6 @@ if(!empty($keyword)){
 $stmt->execute();
 $recordset = $stmt->fetchAll();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
